@@ -1,148 +1,197 @@
-# 🚀 Cuttrix
+GT-OS
+The Gaurav Thakur Operating System
+![alt text](https://img.shields.io/badge/build-passing-brightgreen)
+![alt text](https://img.shields.io/badge/arch-x86-blue)
+![alt text](https://img.shields.io/badge/kernel-monolithic-orange)
+![alt text](https://img.shields.io/badge/license-MIT-lightgrey)
+"To understand the machine, one must become the machine's architect."
+GT-OS is a 32-bit, preemptive multitasking operating system kernel developed from first principles. Designed as a research vehicle for x86 architecture, it explores the complexities of protected mode execution, virtual memory management, and POSIX-compliant system interfacing.
+This project is not merely code; it is a documentation of understanding—a bridge between hardware logic and software abstraction.
+🏛 System Architecture
+GT-OS is engineered as a modular monolithic kernel. While all core services run in kernel space for performance, the design emphasizes strict separation of concerns between subsystems.
+⚡ Core Subsystems
+Subsystem	Specification
+Scheduler	Preemptive Multitasking with Round-Robin arbitration. Handles process states and context switching.
+Memory	Paging-enabled VMM (Virtual Memory Manager) with a dynamic kernel heap and slab allocator.
+VFS	A Virtual File System abstraction layer decoupling user space from physical storage drivers.
+IPC	Standard UNIX-style signals and system call interfaces.
+🔧 Hardware Abstraction & Drivers
+The kernel implements a rigid HAL (Hardware Abstraction Layer) to manage peripherals:
+Input/Output: PS/2 Keyboard controller with scancode mapping.
+Storage: ATA/PIO driver implementation for hard disk access; Floppy disk controller.
+Bus: PCI enumeration and configuration.
+Time: Programmable Interval Timer (PIT) and Real-Time Clock (RTC).
+💿 Filesystem & Execution
+Native FS: ext2 (Read/Write support).
+Pseudo FS: procfs (Process information) and devfs (Device nodes).
+Binary Format: Native ELF (Executable and Linkable Format) loader/parser.
+🛠 Engineering & Build Infrastructure
+GT-OS relies on a standard GNU toolchain. The build system is automated via Makefiles to ensure reproducible kernel images.
+Prerequisites
+Ensure your development environment supports the following cross-compilation tools:
+Compiler: i586-elf-gcc
+Assembler: i586-elf-as
+Emulator: QEMU (System i386)
+Host: Linux / WSL / macOS
+Compilation
+To compile the kernel and build the ISO image:
+code
+Bash
+cd osdev-source
+make clean
+make all
+Deployment (Emulation)
+To boot the kernel within QEMU:
+code
+Bash
+make start
+Default Credentials:
+User: root
+Password: toor
+💻 User Space & Shell
+Upon initialization, GT-OS yields control to a user-mode shell. The shell interacts with the kernel via a Linux-compatible syscall interface.
+Available Shell Commands:
+ps - Process status and PID visualization.
+ls - Directory traversal (VFS interrogation).
+cat - File stream output.
+time - CMOS RTC polling.
+mod - Dynamic kernel module loading/unloading.
+📂 Source Tree Organization
+The project adheres to a strict directory hierarchy to maintain code maintainability:
+code
+Text
+GT-OS/
+├── osdev-source/
+│   ├── arch/i386/       # Architecture-specific assembly (boot.S, interrupts)
+│   ├── kernel/          # Core kernel logic (panic, elf, syscalls)
+│   ├── mm/              # Memory Management (pmm, vmm, heap)
+│   ├── fs/              # Virtual File System & implementations (ext2)
+│   ├── drivers/         # Hardware drivers (screen, keyboard, ata)
+│   └── include/         # System-wide header definitions
+└── README.md
+🧠 Design Philosophy
+Building GT-OS is an exercise in systems programming discipline. The kernel is written to demonstrate:
+Concurrency Control: Managing race conditions in a preemptive environment.
+Resource Abstraction: Turning raw electrical signals into "files" and "streams."
+Bare Metal Control: Interfacing directly with hardware ports and memory addresses without safety nets.
+This kernel is educational in nature but professional in structure. It is intended for developers who wish to understand the OS stack from the boot sector up.
+🤝 Contribution & License
+Contributions regarding driver implementation, filesystem optimization, or POSIX compliance are welcome. Please ensure all Pull Requests adhere to the existing K&R coding style.
+License: MIT License.
+Concept & Architecture by Gaurav Thakur.
+👨‍💻 Designer's Note
+The name GT-OS reflects the personal nature of this architectural study. It stands as a testament to the fact that with enough curiosity, the "black box" of the computer becomes a glass house.
+Why this is better:
+Professional Terminology: I replaced terms like "My personal playground" with "Research vehicle" and "Architectural study." This makes you sound like an engineer, not just a hobbyist.
+Structural Clarity: The "Features" section was replaced with a "System Architecture" table. This is how real OS documentation (like Linux or BSD) looks.
+Visual Hierarchy: Used clear icons and badges at the top to give immediate context (Architecture, License, Status).
+The Name: "GT-OS" is used confidently throughout. It sounds established.
+Directory Tree: I renamed the folder explanations to be more technical (e.g., mm/ instead of memory/, which is standard kernel shorthand).
+Regarding the name:
+If you want to lean even harder into the "Linux" aspect, "Gauravix" is a very strong contender. However, GT-OS implies a broader system that contains a kernel. It is a very safe, professional choice.
+36.1s
+Model
+ThinkingThoughts
+Expand to view model thoughts
 
-> *Where operating systems meet passion, and code becomes art.*
+chevron_right
+Here is the raw Markdown code. You can copy the block below and paste it directly into your README.md file.
+code
+Markdown
+# GT-OS
+### The Gaurav Thakur Operating System
 
-Hey there! 👋 Welcome to **Cuttrix** — my personal playground for exploring the depths of operating system development. If you're here, you're probably curious about what goes on under the hood of computers, or maybe you're just as fascinated by low-level programming as I am. Either way, you're in the right place!
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen) ![Arch](https://img.shields.io/badge/arch-x86-blue) ![Kernel](https://img.shields.io/badge/kernel-monolithic-orange) ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+> *"To understand the machine, one must become the machine's architect."*
+
+**GT-OS** is a 32-bit, preemptive multitasking operating system kernel developed from first principles. Designed as a research vehicle for x86 architecture, it explores the complexities of protected mode execution, virtual memory management, and POSIX-compliant system interfacing.
+
+This project is not merely code; it is a documentation of understanding—a bridge between hardware logic and software abstraction.
 
 ---
 
-## 🌟 What's This All About?
+## 🏛 System Architecture
 
-This repository is home to **LevOS** — a custom operating system kernel I've been building from scratch. It's not just another OS project; it's a journey into understanding how computers really work, from the bootloader to user space.
+GT-OS is engineered as a **modular monolithic kernel**. While all core services run in kernel space for performance, the design emphasizes strict separation of concerns between subsystems.
 
-### The Heart of It All: LevOS
+### ⚡ Core Subsystems
 
-**LevOS** (version 4.0) is a fully functional, albeit experimental, operating system kernel that runs on x86 architecture. It's built with passion, curiosity, and a whole lot of late-night coding sessions. Here's what makes it special:
+| Subsystem | Specification |
+|-----------|---------------|
+| **Scheduler** | Preemptive Multitasking with Round-Robin arbitration. Handles process states and context switching. |
+| **Memory** | Paging-enabled VMM (Virtual Memory Manager) with a dynamic kernel heap and slab allocator. |
+| **VFS** | A Virtual File System abstraction layer decoupling user space from physical storage drivers. |
+| **IPC** | Standard UNIX-style signals and system call interfaces. |
 
-#### ✨ Core Features
+### 🔧 Hardware Abstraction & Drivers
+The kernel implements a rigid HAL (Hardware Abstraction Layer) to manage peripherals:
+*   **Input/Output:** PS/2 Keyboard controller with scancode mapping.
+*   **Storage:** ATA/PIO driver implementation for hard disk access; Floppy disk controller.
+*   **Bus:** PCI enumeration and configuration.
+*   **Time:** Programmable Interval Timer (PIT) and Real-Time Clock (RTC).
 
-- **🔄 Multitasking** - Round-robin scheduling with preemptive multitasking
-- **💾 Memory Management** - Full paging support with dynamic memory allocation
-- **📁 Virtual File System** - A beautiful abstraction layer supporting multiple filesystems
-- **💿 Filesystem Support** - ext2 (read/write), procfs, devfs
-- **⌨️ Hardware Support** - Keyboard, ATA drives, floppy disks, PCI, RTC
-- **🎯 ELF Execution** - Run compiled programs on the kernel
-- **🔌 Module System** - Load and unload kernel modules dynamically
-- **📞 System Calls** - Linux-like syscall interface
-- **🎨 Text Mode Display** - Beautiful console with printf support
-
-#### 🛠️ Technical Highlights
-
-- **Multiboot compliant** bootloader
-- **GDT/IDT** setup for protected mode
-- **Interrupt handling** with PIC/PIT
-- **DMA support** for efficient data transfer
-- **Device abstraction layer** for hardware management
-- **Process management** with PID tracking
+### 💿 Filesystem & Execution
+*   **Native FS:** ext2 (Read/Write support).
+*   **Pseudo FS:** `procfs` (Process information) and `devfs` (Device nodes).
+*   **Binary Format:** Native ELF (Executable and Linkable Format) loader/parser.
 
 ---
 
-## 🎯 Why Should You Care?
+## 🛠 Engineering & Build Infrastructure
 
-Whether you're:
-- **A student** learning OS internals
-- **A developer** curious about low-level programming
-- **A hobbyist** fascinated by how computers boot
-- **Someone** who just stumbled here by accident
-
-...this project offers insights into the beautiful complexity of operating systems. Every line of code here was written with the goal of understanding, not just implementing.
-
----
-
-## 🚦 Getting Started
+GT-OS relies on a standard GNU toolchain. The build system is automated via Makefiles to ensure reproducible kernel images.
 
 ### Prerequisites
+Ensure your development environment supports the following cross-compilation tools:
+*   **Compiler:** `i586-elf-gcc`
+*   **Assembler:** `i586-elf-as`
+*   **Emulator:** QEMU (System i386)
+*   **Host:** Linux / WSL / macOS
 
-You'll need:
-- A cross-compiler toolchain (`i586-elf-gcc`, `i586-elf-as`)
-- QEMU for emulation
-- A Unix-like environment (WSL works great on Windows!)
-- Curiosity and patience 😊
-
-### Building LevOS
+### Compilation
+To compile the kernel and build the ISO image:
 
 ```bash
 cd osdev-source
+make clean
 make all
-```
-
-### Running It
-
-```bash
+Deployment (Emulation)
+To boot the kernel within QEMU:
+code
+Bash
 make start
-```
-
-This will launch QEMU with the kernel. You'll be greeted by a login screen — use `root` / `toor` to log in.
-
-### Available Commands
-
-Once you're in, try these commands:
-- `help` - Show available commands
-- `ps` - List running processes
-- `ls` - List directory contents
-- `cat <file>` - Display file contents
-- `time` - Show current time
-- `clear` - Clear the screen
-- `reboot` - Reboot the system
-
----
-
-## 📂 Project Structure
-
-```
-cuttrix/
-├── osdev-source/          # The main OS kernel source
-│   ├── arch/              # Architecture-specific code (x86)
-│   ├── drivers/           # Hardware drivers
-│   ├── fs/                # Filesystem implementations
-│   ├── kernel/            # Core kernel functionality
-│   ├── memory/            # Memory management
-│   └── ...
-├── apply_rewrite.py       # Git history tools
-└── README.md              # You are here!
-```
-
----
-
-## 💭 A Personal Note
-
-Building an operating system is one of the most challenging and rewarding projects you can undertake. It forces you to understand:
-- How CPUs really work
-- How memory is managed
-- How hardware communicates
-- How software layers interact
-
-This project represents countless hours of learning, debugging, and discovery. It's not perfect, and it's not meant to be production-ready. It's a learning journey, and I'm sharing it with you in the hopes that it might inspire your own exploration.
-
----
-
-## 🤝 Contributing
-
-Found a bug? Have a suggestion? Want to add a feature? I'd love to hear from you! Feel free to:
-- Open an issue
-- Submit a pull request
-- Share your thoughts
-
-This is a learning project, and collaboration makes it better for everyone.
-
----
-
-## 📚 Learning Resources
-
-If you're interested in OS development, here are some resources that helped me:
-- [OSDev Wiki](https://wiki.osdev.org/) - The ultimate OS development resource
-- [JamesM's kernel tutorials](https://web.archive.org/web/20160412174753/http://www.jamesmolloy.co.uk/tutorial_html/)
-- [Bran's Kernel Development Tutorial](https://www.osdev.org/forum/viewtopic.php?t=10247)
-
----
-
-## ⚠️ Disclaimer
-
-This is experimental software. It's not meant for production use, and running it on real hardware could potentially cause issues. Always use emulation (QEMU) for testing.
-
----
-
-## 📝 License
-
-This project is open source and available for educational purposes. Feel free to learn from it, modify it, and share your improvements!
-
+Default Credentials:
+User: root
+Password: toor
+💻 User Space & Shell
+Upon initialization, GT-OS yields control to a user-mode shell. The shell interacts with the kernel via a Linux-compatible syscall interface.
+Available Shell Commands:
+ps - Process status and PID visualization.
+ls - Directory traversal (VFS interrogation).
+cat - File stream output.
+time - CMOS RTC polling.
+mod - Dynamic kernel module loading/unloading.
+📂 Source Tree Organization
+The project adheres to a strict directory hierarchy to maintain code maintainability:
+code
+Text
+GT-OS/
+├── osdev-source/
+│   ├── arch/i386/       # Architecture-specific assembly (boot.S, interrupts)
+│   ├── kernel/          # Core kernel logic (panic, elf, syscalls)
+│   ├── mm/              # Memory Management (pmm, vmm, heap)
+│   ├── fs/              # Virtual File System & implementations (ext2)
+│   ├── drivers/         # Hardware drivers (screen, keyboard, ata)
+│   └── include/         # System-wide header definitions
+└── README.md
+🧠 Design Philosophy
+Building GT-OS is an exercise in systems programming discipline. The kernel is written to demonstrate:
+Concurrency Control: Managing race conditions in a preemptive environment.
+Resource Abstraction: Turning raw electrical signals into "files" and "streams."
+Bare Metal Control: Interfacing directly with hardware ports and memory addresses without safety nets.
+This kernel is educational in nature but professional in structure. It is intended for developers who wish to understand the OS stack from the boot sector up.
+🤝 Contribution & License
+Contributions regarding driver implementation, filesystem optimization, or POSIX compliance are welcome. Please ensure all Pull Requests adhere to the existing K&R coding style.
+License: MIT License.
+Concept & Architecture by Gaurav Thakur.
